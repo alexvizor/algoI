@@ -3,10 +3,9 @@ package main
 import "fmt"
 
 func main() {
-	arr := [...]int{1, 4, 5, 9, 7, 0, 8, 20, 11}
+	arr := []int{1, 4, 5, 9, 7, 0, 8, 20, 11}
 
-	fmt.Println(arr)
-	fmt.Println(merge_sort(arr[:]))
+	fmt.Println(merge_sort(arr))
 }
 
 func merge_sort(array []int) []int {
@@ -21,7 +20,7 @@ func merge_sort(array []int) []int {
 		return merge(left, right)
 	}
 
-	return []int{array[0]}
+	return array[0:1]
 }
 
 func merge(left, right []int) []int {
