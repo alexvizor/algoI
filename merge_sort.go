@@ -1,9 +1,21 @@
 package main
 
 import "fmt"
+import "os"
+import "strconv"
 
+// Test data: 1 4 5 9 7 0 8 20 11
 func main() {
-	arr := []int{1, 4, 5, 9, 7, 0, 8, 20, 11}
+	arr := make([]int, 0)
+	for _, val := range os.Args[1:] {
+		v, err := strconv.Atoi(val)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		arr = append(arr, v)
+	}
 
 	fmt.Println(merge_sort(arr))
 }
@@ -13,7 +25,7 @@ func merge_sort(array []int) []int {
 
 	if al > 1 {
 		med := al / 2
-		
+
 		left := merge_sort(array[:med])
 		right := merge_sort(array[med:])
 
@@ -25,7 +37,7 @@ func merge_sort(array []int) []int {
 
 func merge(left, right []int) []int {
 	i, j, ll, rl := 0, 0, len(left), len(right)
-	res := make([]int, 0);
+	res := make([]int, 0)
 
 	for i < ll && j < rl {
 		if left[i] < right[j] {
@@ -42,4 +54,3 @@ func merge(left, right []int) []int {
 
 	return res
 }
-

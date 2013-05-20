@@ -3,11 +3,14 @@ package main
 import "io"
 import "os"
 import "fmt"
+import "flag"
 import "log"
 import "bufio"
 import "strings"
 import "strconv"
 import "sort"
+
+var path = flag.String("path", "SCC.txt", "Path to data file")
 
 func main() {
 	fmt.Println("Max vertecis:", find_max_sccs())
@@ -106,10 +109,11 @@ func print_graph(vs []*vertex) {
 }
 
 func parse() []*vertex {
-	file, err := os.Open("SCC.txt")
+	file, err := os.Open(*path)
 	if err != nil {
 		log.Fatal("Error openning file:", err)
 	}
+	defer file.Close()
 
 	bio := bufio.NewReader(file)
 	vs := make([]*vertex, 875714)
