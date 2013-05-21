@@ -6,12 +6,6 @@ import "io"
 import "bufio"
 import "strconv"
 
-type result struct {
-	inv uint
-	sub []int
-}
-
-// Input data in IntegerArray.txt
 func main() {
 	arr := make([]int, 0)
 
@@ -34,36 +28,30 @@ func main() {
 	}()
 
 	fmt.Println("Input array contains", len(arr), "items")
-	inv := get_invertions(arr).inv
+	inv, _ := get_invertions(arr)
 	fmt.Println("Inversion count:", inv)
 }
 
-func get_invertions(array []int) result {
+func get_invertions(array []int) (uint, []int) {
 	al := len(array)
 
 	if al == 0 {
-		return result{0, array}
+		return 0, array
 	}
 
 	if al > 1 {
 		med := al / 2
 
-		left, right := make(chan result), make(chan result)
-		go func() {
-			left <- get_invertions(array[:med])
-		}()
-		go func() {
-			right <- get_invertions(array[med:])
-		}()
-		l, r := <-left, <-right
+		linv, left := get_invertions(array[:med])
+		rinv, right := get_invertions(array[med:])
 
-		return compute_inverts(l.sub, r.sub, l.inv+r.inv)
+		return compute_inverts(left, right, linv+rinv)
 	}
 
-	return result{0, []int{array[0]}}
+	return 0, []int{array[0]}
 }
 
-func compute_inverts(left, right []int, inv uint) result {
+func compute_inverts(left, right []int, inv uint) (uint, []int) {
 	var i, j, ll, rl = uint(0), uint(0), uint(len(left)), uint(len(right))
 	res := make([]int, 0)
 
@@ -81,5 +69,5 @@ func compute_inverts(left, right []int, inv uint) result {
 	res = append(res, left[i:]...)
 	res = append(res, right[j:]...)
 
-	return result{inv, res}
+	return inv, res
 }
