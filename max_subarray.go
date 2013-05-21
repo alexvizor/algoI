@@ -5,6 +5,11 @@ import "math"
 import "os"
 import "strconv"
 
+type result struct {
+	sub []int
+	max int
+}
+
 // Text data: 13 -3 -25 20 -3 -16 -23 18 20 -7 12 -5 -22 15 -4 7
 func main() {
 	arr := make([]int, 0)
@@ -18,31 +23,44 @@ func main() {
 		arr = append(arr, v)
 	}
 
-	fmt.Println(arr)
-	sub, max := find_max_subarray(arr[:])
-	fmt.Println("Max sum:", max, "sub-array", sub)
+	fmt.Println("Original array:", arr)
+	sub := find_max_subarray(arr[:])
+	fmt.Println("Max sum:", sub.max, "sub-array", sub.sub)
 }
 
-func find_max_subarray(array []int) ([]int, int) {
-	l := len(array)
-	if l == 1 {
-		return array, array[0]
+func find_max_subarray(array []int) result {
+	ln := len(array)
+	if ln == 0 {
+		return result{array, 0}
+	}
+	if ln == 1 {
+		return result{array, array[0]}
 	}
 
-	mid := l / 2
-	left, lmax := find_max_subarray(array[:mid])
-	right, rmax := find_max_subarray(array[mid:])
-	cros, cmax := find_max_cross(array)
+	mid := ln / 2
+	leftc, rightc, crossc := make(chan result), make(chan result), make(chan result)
+	go func() {
+		leftc <- find_max_subarray(array[:mid])
+	}()
+	go func() {
+		rightc <- find_max_subarray(array[mid:])
+	}()
+	go func() {
+		crossc <- find_max_cross(array)
+	}()
+	l := <-leftc
+	r := <-rightc
+	c := <-crossc
 
-	if lmax > cmax && lmax > rmax {
-		return left, lmax
-	} else if rmax > cmax && rmax > lmax {
-		return right, rmax
+	if l.max > c.max && l.max > r.max {
+		return l
+	} else if r.max > c.max && r.max > l.max {
+		return r
 	}
-	return cros, cmax
+	return c
 }
 
-func find_max_cross(array []int) ([]int, int) {
+func find_max_cross(array []int) result {
 	l := len(array)
 	mid := l / 2
 
@@ -64,5 +82,5 @@ func find_max_cross(array []int) ([]int, int) {
 		}
 	}
 
-	return array[left:right], max_left + max_right
+	return result{array[left:right], max_left + max_right}
 }
