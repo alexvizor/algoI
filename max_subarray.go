@@ -48,9 +48,7 @@ func find_max_subarray(array []int) result {
 	go func() {
 		crossc <- find_max_cross(array)
 	}()
-	l := <-leftc
-	r := <-rightc
-	c := <-crossc
+	l, r, c := <-leftc, <-rightc, <-crossc
 
 	if l.max > c.max && l.max > r.max {
 		return l
