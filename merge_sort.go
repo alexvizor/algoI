@@ -23,13 +23,22 @@ func main() {
 func merge_sort(array []int) []int {
 	al := len(array)
 
+	if al == 0 {
+		return array
+	}
+
 	if al > 1 {
 		med := al / 2
 
-		left := merge_sort(array[:med])
-		right := merge_sort(array[med:])
+		left, right := make(chan []int), make(chan []int)
+		go func() {
+			left <- merge_sort(array[:med])
+		}()
+		go func() {
+			right <- merge_sort(array[med:])
+		}()
 
-		return merge(left, right)
+		return merge(<-left, <-right)
 	}
 
 	return array[0:1]
