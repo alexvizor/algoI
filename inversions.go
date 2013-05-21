@@ -6,6 +6,7 @@ import "io"
 import "bufio"
 import "strconv"
 
+// Input data is in IntegerArray.txt
 func main() {
 	arr := make([]int, 0)
 
